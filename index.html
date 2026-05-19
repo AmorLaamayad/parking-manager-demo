@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Manager - Plateforme de gestion de parkings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Favicon (أيقونة المتصفح) -->
+    <link rel="icon" type="image/png" href="images/app-icon.png">
+    <link rel="apple-touch-icon" href="images/app-icon.png">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-parking"></i>
+                    <span>Parking<span class="highlight">Manager</span></span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#accueil" data-key="nav_accueil">Accueil</a></li>
+                    <li><a href="#fonctionnalites" data-key="nav_features">Fonctionnalités</a></li>
+                    <li><a href="#hierarchie" data-key="nav_hierarchy">Hiérarchie</a></li>
+                    <li><a href="#plateforme" data-key="nav_platform">Plateforme</a></li>
+                    <li><a href="#telechargement" data-key="nav_download">Télécharger</a></li>
+                </ul>
+                <div class="language-switch">
+                    <button class="lang-btn active" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="ar">AR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <h1 data-key="hero_title">Gestion <span class="highlight">intelligente</span> des parkings</h1>
+                    <p data-key="hero_desc">Solution complète pour la gestion des parkings publics et privés. Application mobile pour les agents + Plateforme web pour les municipalités et investisseurs.</p>
+                    <div class="hero-buttons">
+                        <a href="#telechargement" class="btn btn-primary">
+                            <i class="fab fa-android"></i> <span data-key="hero_btn_apk">Télécharger l'APK</span>
+                        </a>
+                        <a href="#plateforme" class="btn btn-outline">
+                            <i class="fas fa-globe"></i> <span data-key="hero_btn_platform">Découvrir la plateforme</span>
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="number">10+</span>
+                            <span class="label" data-key="hero_stat_features">Fonctionnalités</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number">69</span>
+                            <span class="label" data-key="hero_stat_wilayas">Wilayas</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number">24/7</span>
+                            <span class="label" data-key="hero_stat_available">Disponible</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div class="app-demo">
+                                <i class="fas fa-qrcode"></i>
+                                <i class="fas fa-camera"></i>
+                                <i class="fas fa-print"></i>
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fonctionnalités -->
+    <section id="fonctionnalites" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-key="features_title">Fonctionnalités de l'application</h2>
+                <p data-key="features_subtitle">Une application mobile puissante pour les agents de parking</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-qrcode"></i></div>
+                    <h3 data-key="feature_qr">Scan QR Code</h3>
+                    <p data-key="feature_qr_desc">Sortie rapide par scan du QR code sur le ticket</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-camera"></i></div>
+                    <h3 data-key="feature_plate">Scan plaque</h3>
+                    <p data-key="feature_plate_desc">Reconnaissance automatique des plaques d'immatriculation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-print"></i></div>
+                    <h3 data-key="feature_print">Impression Bluetooth</h3>
+                    <p data-key="feature_print_desc">Impression des tickets et reçus sur imprimante thermique</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-calculator"></i></div>
+                    <h3 data-key="feature_calc">Calcul automatique</h3>
+                    <p data-key="feature_calc_desc">Calcul du montant selon la durée de stationnement</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-chart-line"></i></div>
+                    <h3 data-key="feature_report">Rapports quotidiens</h3>
+                    <p data-key="feature_report_desc">Statistiques détaillées et impression</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3 data-key="feature_map">Géolocalisation</h3>
+                    <p data-key="feature_map_desc">Affichage du parking sur Google Maps</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galerie des captures d'écran -->
+    <section class="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-key="gallery_title">Captures d'écran de l'application</h2>
+                <p data-key="gallery_subtitle">Découvrez l'interface de l'application mobile</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="images/screenshot-login.jpg" alt="Login" onerror="this.src='https://placehold.co/200x400/2196F3/white?text=Login'">
+                    <div class="gallery-caption" data-key="gallery_login">🔐 Écran de connexion</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/screenshot-dashboard.jpg" alt="Dashboard" onerror="this.src='https://placehold.co/200x400/4CAF50/white?text=Dashboard'">
+                    <div class="gallery-caption" data-key="gallery_dashboard">📊 Tableau de bord</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/screenshot-checkin.jpg" alt="Check-In" onerror="this.src='https://placehold.co/200x400/FF9800/white?text=Check-In'">
+                    <div class="gallery-caption" data-key="gallery_checkin">✅ Entrée véhicule</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/screenshot-checkout.jpg" alt="Check-Out" onerror="this.src='https://placehold.co/200x400/f44336/white?text=Check-Out'">
+                    <div class="gallery-caption" data-key="gallery_checkout">🚗 Sortie véhicule</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/screenshot-qrcode.jpg" alt="QR Code" onerror="this.src='https://placehold.co/200x400/9C27B0/white?text=QR+Code'">
+                    <div class="gallery-caption" data-key="gallery_qrcode">📱 Scan QR Code</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/screenshot-report.jpg" alt="Report" onerror="this.src='https://placehold.co/200x400/00BCD4/white?text=Rapport'">
+                    <div class="gallery-caption" data-key="gallery_report">📈 Rapport quotidien</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/screenshot-printer.jpg" alt="Report" onerror="this.src='https://placehold.co/200x400/00BCD4/white?text=Rapport'">
+                    <div class="gallery-caption" data-key="gallery_printer">🖨️ Paramètres imprimante</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hiérarchie Administrative -->
+    <section id="hierarchie" class="hierarchy">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-key="hierarchy_title">Hiérarchie administrative</h2>
+                <p data-key="hierarchy_subtitle">Une structure claire pour la gestion des parkings à l'échelle nationale</p>
+            </div>
+            <div class="hierarchy-diagram">
+                <div class="level level-1">
+                    <div class="node">🌍 <span data-key="level_region">الإقليم</span><br><span>Région</span></div>
+                    <div class="arrow"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="level level-2">
+                    <div class="node">🏛️ <span data-key="level_wilaya">الولاية</span><br><span>Wilaya (69)</span></div>
+                    <div class="arrow"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="level level-3">
+                    <div class="node">📌 <span data-key="level_daira">الدائرة</span><br><span>Daïra</span></div>
+                    <div class="arrow"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="level level-4">
+                    <div class="node">🏙️ <span data-key="level_commune">البلدية</span><br><span>Commune</span></div>
+                    <div class="arrow"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="level level-5">
+                    <div class="node">🅿️ <span data-key="level_space">مساحة الموقف</span><br><span>Parking Space</span></div>
+                    <div class="arrow"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="level level-6">
+                    <div class="node">📄 <span data-key="level_contract">عقد كراء</span><br><span>Contrat annuel</span></div>
+                    <div class="arrow"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="level level-7">
+                    <div class="node">👨‍💼 <span data-key="level_investor">مستثمر</span><br><span>Investisseur</span></div>
+                    <div class="arrow"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="level level-8">
+                    <div class="node">👤 <span data-key="level_agent">عامل</span><br><span>Agent</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plateforme Web -->
+    <section id="plateforme" class="platform">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-key="platform_title">Plateforme web centralisée</h2>
+                <p data-key="platform_subtitle">Une solution pour tous les acteurs</p>
+            </div>
+            <div class="platform-grid">
+                <div class="platform-card">
+                    <div class="platform-icon"><i class="fas fa-landmark"></i></div>
+                    <h3 data-key="platform_commune">Municipalité</h3>
+                    <ul>
+                        <li>✓ <span data-key="commune_feature_1">Ajouter des espaces de parking</span></li>
+                        <li>✓ <span data-key="commune_feature_2">Gérer les appels d'offres</span></li>
+                        <li>✓ <span data-key="commune_feature_3">Suivre les contrats</span></li>
+                        <li>✓ <span data-key="commune_feature_4">Percevoir les redevances</span></li>
+                    </ul>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3 data-key="platform_wilaya">Wilaya / Daira</h3>
+                    <ul>
+                        <li>✓ <span data-key="wilaya_feature_1">Valider les espaces</span></li>
+                        <li>✓ <span data-key="wilaya_feature_2">Superviser les municipalités</span></li>
+                        <li>✓ <span data-key="wilaya_feature_3">Rapports régionaux</span></li>
+                    </ul>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon"><i class="fas fa-building"></i></div>
+                    <h3 data-key="platform_investor">Investisseur</h3>
+                    <ul>
+                        <li>✓ <span data-key="investor_feature_1">Postuler pour les contrats</span></li>
+                        <li>✓ <span data-key="investor_feature_2">Gérer ses parkings</span></li>
+                        <li>✓ <span data-key="investor_feature_3">Recruter des agents</span></li>
+                        <li>✓ <span data-key="investor_feature_4">Consulter les rapports</span></li>
+                    </ul>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon"><i class="fas fa-user-cog"></i></div>
+                    <h3 data-key="platform_admin">Super Admin</h3>
+                    <ul>
+                        <li>✓ <span data-key="admin_feature_1">Gérer tous les utilisateurs</span></li>
+                        <li>✓ <span data-key="admin_feature_2">Superviser tout le système</span></li>
+                        <li>✓ <span data-key="admin_feature_3">Rapports nationaux</span></li>
+                        <li>✓ <span data-key="admin_feature_4">Configurer les paramètres</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Accès Rapide aux Plateformes -->
+    <section class="quick-access">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-key="access_title">Accès aux plateformes</h2>
+                <p data-key="access_subtitle">Cliquez pour découvrir les interfaces démo</p>
+            </div>
+            <div class="access-grid">
+                <a href="region.html" class="access-card" target="_blank">
+                    <i class="fas fa-globe-africa"></i>
+                    <h3 data-key="access_region">Région</h3>
+                    <p data-key="access_region_desc">Superviser toutes les wilayas</p>
+                    <span class="demo-badge">Démo →</span>
+                </a>
+                <a href="wilaya.html" class="access-card" target="_blank">
+                    <i class="fas fa-chart-line"></i>
+                    <h3 data-key="access_wilaya">Wilaya / Daïra</h3>
+                    <p data-key="access_wilaya_desc">Approuver les espaces, superviser</p>
+                    <span class="demo-badge">Démo →</span>
+                </a>
+                <a href="commune.html" class="access-card" target="_blank">
+                    <i class="fas fa-landmark"></i>
+                    <h3 data-key="access_commune">Municipalité</h3>
+                    <p data-key="access_commune_desc">Gérer les espaces, contrats et investisseurs</p>
+                    <span class="demo-badge">Démo →</span>
+                </a>
+                <a href="investor.html" class="access-card" target="_blank">
+                    <i class="fas fa-building"></i>
+                    <h3 data-key="access_investor">Investisseur</h3>
+                    <p data-key="access_investor_desc">Gérer vos parkings, agents et revenus</p>
+                    <span class="demo-badge">Démo →</span>
+                </a>
+                <a href="super-admin.html" class="access-card" target="_blank">
+                    <i class="fas fa-user-cog"></i>
+                    <h3 data-key="access_admin">Super Admin</h3>
+                    <p data-key="access_admin_desc">Administration complète de la plateforme</p>
+                    <span class="demo-badge">Démo →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Téléchargement -->
+    <!-- Téléchargement -->
+    <!-- Téléchargement -->
+<section id="telechargement" class="download">
+    <div class="container">
+        <div class="download-card">
+            <div class="app-icon">
+                <img src="images/app-icon.png" alt="Parking Manager" class="app-icon-img">
+            </div>
+            <h2 data-key="download_title">Téléchargez l'application</h2>
+            <p data-key="download_desc">Application Android pour les agents de parking</p>
+            
+            <div class="download-info">
+                <div class="info-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span data-key="download_version">Version: 1.0</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-database"></i>
+                    <span data-key="download_size">Taille: 19.5 MB</span>
+                </div>
+                <div class="info-item">
+                    <i class="fab fa-android"></i>
+                    <span data-key="download_android">Android 7.0+</span>
+                </div>
+            </div>
+
+            <a href="apk/parking-manager.apk" class="btn btn-download" download>
+                <i class="fab fa-android"></i> 
+                <span data-key="download_btn">Télécharger APK</span>
+                <small style="display: block; font-size: 0.7rem;">Cliquez pour télécharger</small>
+            </a>
+
+            <!-- QR Code pour téléchargement -->
+            <div class="qr-download">
+                <img src="images/qr-download.png" alt="QR Code" class="qr-img">
+                <p>Scannez pour télécharger</p>
+            </div>
+
+            <div class="demo-credentials">
+                <p><strong data-key="demo_credentials">Identifiants de démo :</strong></p>
+                <code>👤 Username: att</code>
+                <code>🔑 Password: 123</code>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-parking"></i>
+                    <span>ParkingManager</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#accueil" data-key="footer_home">Accueil</a>
+                    <a href="#fonctionnalites" data-key="footer_features">Fonctionnalités</a>
+                    <a href="#hierarchie" data-key="footer_hierarchy">Hiérarchie</a>
+                    <a href="#plateforme" data-key="footer_platform">Plateforme</a>
+                </div>
+                <div class="footer-contact">
+                    <p><i class="fas fa-envelope"></i> contact@parkingmanager.dz</p>
+                    <p><i class="fas fa-phone"></i> +213 00 00 00 00</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-key="footer_copyright">&copy; 2025 Parking Manager - Solution de gestion de parkings</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+
+    <!-- Lightbox for images -->
+    <div id="lightbox" class="lightbox">
+        <span class="close-lightbox">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <style>
+    /* Lightbox */
+    .lightbox {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9);
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .lightbox-content {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .close-lightbox {
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .close-lightbox:hover {
+        color: #FF9800;
+    }
+    </style>
+
+    <script>
+    // Lightbox functionality
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeLightbox = document.querySelector('.close-lightbox');
+
+    document.querySelectorAll('.gallery-item img').forEach(img => {
+        img.addEventListener('click', () => {
+            lightbox.style.display = 'flex';
+            lightboxImg.src = img.src;
+        });
+    });
+
+    closeLightbox.addEventListener('click', () => {
+        lightbox.style.display = 'none';
+    });
+
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            lightbox.style.display = 'none';
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Région Centre - Parking Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background: #f0f2f5; transition: all 0.3s; }
+        html[dir="rtl"] body { direction: rtl; }
+        
+        /* Sidebar */
+        .sidebar { width: 280px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); position: fixed; height: 100vh; color: white; overflow-y: auto; }
+        .sidebar .logo { padding: 25px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar .logo i { font-size: 2.5rem; color: #FF9800; }
+        .sidebar .logo span { font-size: 1.2rem; font-weight: bold; display: block; margin-top: 10px; }
+        .sidebar .logo small { font-size: 0.7rem; opacity: 0.7; display: block; }
+        .sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 15px 25px; color: #ccc; text-decoration: none; transition: 0.3s; }
+        .sidebar nav a:hover, .sidebar nav a.active { background: #FF9800; color: white; }
+        .sidebar nav a i { width: 20px; }
+        
+        /* Language Switcher in Sidebar */
+        .sidebar-lang { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; }
+        .sidebar-lang .lang-btn { background: transparent; border: 1px solid #FF9800; color: white; padding: 8px 12px; margin: 0 5px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .sidebar-lang .lang-btn:hover, .sidebar-lang .lang-btn.active { background: #FF9800; color: white; }
+        
+        /* Main content */
+        .main-content { margin-left: 280px; padding: 20px; }
+        .header { background: white; padding: 20px 25px; border-radius: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header h2 { color: #333; }
+        .header h2 i { color: #FF9800; margin-right: 10px; }
+        .header .date { color: #666; font-size: 0.9rem; }
+        
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.3s; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card .info h3 { font-size: 2rem; color: #333; }
+        .stat-card .info p { color: #666; font-size: 0.85rem; margin-top: 5px; }
+        .stat-card i { font-size: 2.5rem; opacity: 0.3; }
+        .stat-card.blue i { color: #2196F3; }
+        .stat-card.green i { color: #4CAF50; }
+        .stat-card.orange i { color: #FF9800; }
+        .stat-card.purple i { color: #9C27B0; }
+        
+        /* Charts Grid */
+        .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 25px; }
+        .chart-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .chart-card h3 { margin-bottom: 15px; color: #333; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+        .chart-card canvas { max-height: 250px; }
+        
+        /* Map */
+        .map-card { background: white; border-radius: 15px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .map-header { padding: 20px; border-bottom: 1px solid #eee; }
+        .map-header h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        #regionMap { height: 450px; width: 100%; }
+        
+        /* Wilayas Table */
+        .card { background: white; border-radius: 15px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .card-header h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; }
+        .btn-primary { background: #FF9800; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #ddd; cursor: pointer; }
+        .btn-sm { padding: 4px 10px; font-size: 0.7rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { color: #666; font-weight: 500; }
+        .progress-bar { width: 100%; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #FF9800; border-radius: 3px; }
+        
+        /* Modal for Wilaya Details */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; border-radius: 15px; width: 500px; max-width: 90%; padding: 25px; }
+        .modal-content h3 { margin-bottom: 20px; color: #FF9800; }
+        .modal-content .detail-row { padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        
+        /* Footer */
+        .footer { background: #1a1a2e; color: white; padding: 20px; text-align: center; border-radius: 15px; margin-top: 20px; font-size: 0.8rem; }
+        
+        @media (max-width: 768px) { .sidebar { width: 70px; } .sidebar span, .sidebar .logo span { display: none; } .main-content { margin-left: 70px; } .stats-grid, .charts-grid { grid-template-columns: repeat(2, 1fr); } }
+        /* ========== دعم اللغة العربية (RTL) ========== */
+html[dir="rtl"] .sidebar {
+    right: 0;
+    left: auto;
+}
+
+html[dir="rtl"] .main-content {
+    margin-left: 0;
+    margin-right: 280px;
+}
+
+html[dir="rtl"] .stats-grid,
+html[dir="rtl"] .charts-grid {
+    direction: rtl;
+}
+
+html[dir="rtl"] .stat-card,
+html[dir="rtl"] .chart-card,
+html[dir="rtl"] .map-card,
+html[dir="rtl"] .card {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .card-header {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] table th,
+html[dir="rtl"] table td {
+    text-align: right;
+}
+
+html[dir="rtl"] .progress-bar {
+    direction: ltr;
+}
+
+html[dir="rtl"] .modal-content {
+    text-align: right;
+}
+
+html[dir="rtl"] .header {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .date {
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    html[dir="rtl"] .main-content {
+        margin-right: 70px;
+        margin-left: 0;
+    }
+    
+    html[dir="rtl"] .sidebar {
+        right: 0;
+        left: auto;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-globe-africa"></i>
+            <span>Parking Manager</span>
+            <small data-key="region_label">Région Centre</small>
+        </div>
+        <nav>
+            <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> <span data-key="nav_dashboard">Tableau de bord</span></a>
+            <a href="#"><i class="fas fa-chart-line"></i> <span data-key="nav_stats">Statistiques</span></a>
+            <a href="#"><i class="fas fa-map-marked-alt"></i> <span data-key="nav_map">Carte</span></a>
+            <a href="#"><i class="fas fa-city"></i> <span data-key="nav_wilayas">Wilayas</span></a>
+            <a href="#"><i class="fas fa-parking"></i> <span data-key="nav_parkings">Parkings</span></a>
+        </nav>
+        <div class="sidebar-lang">
+            <button class="lang-btn active" data-lang="fr">FR</button>
+            <button class="lang-btn" data-lang="ar">AR</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <h2><i class="fas fa-globe-africa"></i> <span data-key="header_title">Région Centre - Tableau de bord</span></h2>
+            <div class="date"><i class="far fa-calendar-alt"></i> <span id="currentDate"></span></div>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card blue" onclick="showRegionStats('wilayas')">
+                <div class="info"><h3 id="totalWilayas">6</h3><p data-key="stat_wilayas">Wilayas</p></div>
+                <i class="fas fa-city"></i>
+            </div>
+            <div class="stat-card green" onclick="showRegionStats('parkings')">
+                <div class="info"><h3 id="totalParkings">160</h3><p data-key="stat_parkings">Parkings</p></div>
+                <i class="fas fa-parking"></i>
+            </div>
+            <div class="stat-card orange" onclick="showRegionStats('places')">
+                <div class="info"><h3 id="totalPlaces">17530</h3><p data-key="stat_places">Places</p></div>
+                <i class="fas fa-chair"></i>
+            </div>
+            <div class="stat-card purple" onclick="showRegionStats('revenue')">
+                <div class="info"><h3 id="totalRevenue">127.4</h3><p data-key="stat_revenue">Revenus (M DA)</p></div>
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-bar"></i> <span data-key="chart_wilayas_title">Top 5 Wilayas (nombre de parkings)</span></h3>
+                <canvas id="wilayasChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie"></i> <span data-key="chart_status_title">Répartition des parkings par statut</span></h3>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Interactive Map -->
+        <div class="map-card">
+            <div class="map-header">
+                <h3><i class="fas fa-map-marked-alt"></i> <span data-key="map_title">Carte des parkings - Région Centre</span></h3>
+            </div>
+            <div id="regionMap"></div>
+        </div>
+        
+        <!-- Wilayas Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-city"></i> <span data-key="table_title">Liste des wilayas de la région</span></h3>
+                <button class="btn btn-outline" onclick="exportData()"><i class="fas fa-download"></i> <span data-key="export_btn">Exporter</span></button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table id="wilayasTable">
+                    <thead>
+                        <tr><th data-key="table_wilaya">Wilaya</th><th data-key="table_code">Code</th><th data-key="table_parkings">Parkings</th><th data-key="table_places">Places</th><th data-key="table_occupation">Taux occupation</th><th data-key="table_revenue">Revenus (M DA)</th><th data-key="table_action">Action</th></tr>
+                    </thead>
+                    <tbody id="wilayasTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Recent Parkings -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-parking"></i> <span data-key="recent_title">Derniers parkings ajoutés</span></h3>
+                <button class="btn btn-outline"><span data-key="view_all">Voir tout</span> →</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th data-key="recent_name">Nom</th><th data-key="recent_wilaya">Wilaya</th><th data-key="recent_places">Places</th><th data-key="recent_status">Statut</th><th data-key="recent_date">Date</th></tr></thead>
+                    <tbody id="recentParkingsBody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p data-key="footer_text">© 2025 Parking Manager - Solution de gestion de parkings pour la région Centre</p>
+        </div>
+    </div>
+    
+    <!-- Modal for Wilaya Details -->
+    <div id="wilayaModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Détails Wilaya</h3>
+            <div id="modalDetails"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="closeModal()" data-key="close_btn">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données de la région
+        const regionData = {
+            name: "Centre",
+            wilayas: [
+                { id: 1, name: "Alger", name_ar: "الجزائر", name_en: "Algiers", code: "16", parkings: 45, places: 4850, revenue: 42.5, lat: 36.7763, lng: 3.0583, occupation: 78, approved: 38, pending: 7 },
+                { id: 2, name: "Blida", name_ar: "البليدة", name_en: "Blida", code: "9", parkings: 28, places: 3100, revenue: 21.8, lat: 36.4700, lng: 2.8200, occupation: 65, approved: 22, pending: 6 },
+                { id: 3, name: "Tipaza", name_ar: "تيبازة", name_en: "Tipaza", code: "42", parkings: 18, places: 1950, revenue: 12.7, lat: 36.5900, lng: 2.4500, occupation: 55, approved: 14, pending: 4 },
+                { id: 4, name: "Boumerdes", name_ar: "بومرداس", name_en: "Boumerdes", code: "35", parkings: 22, places: 2420, revenue: 15.9, lat: 36.7600, lng: 3.4800, occupation: 60, approved: 18, pending: 4 },
+                { id: 5, name: "Tizi-Ouzou", name_ar: "تيزي وزو", name_en: "Tizi-Ouzou", code: "15", parkings: 32, places: 3560, revenue: 24.7, lat: 36.7200, lng: 4.0500, occupation: 70, approved: 27, pending: 5 },
+                { id: 6, name: "Bouira", name_ar: "البويرة", name_en: "Bouira", code: "10", parkings: 15, places: 1650, revenue: 9.8, lat: 36.3800, lng: 3.9000, occupation: 48, approved: 11, pending: 4 }
+            ]
+        };
+        
+        const recentParkings = [
+            { name: "Parking Hydra", wilaya: "Alger", places: 200, status: "approved", date: "2025-05-15" },
+            { name: "Parking El Biar", wilaya: "Alger", places: 80, status: "approved", date: "2025-05-14" },
+            { name: "Parking Blida Centre", wilaya: "Blida", places: 120, status: "pending", date: "2025-05-13" },
+            { name: "Parking Tipaza Mer", wilaya: "Tipaza", places: 100, status: "approved", date: "2025-05-12" },
+            { name: "Parking Tizi Centre", wilaya: "Tizi-Ouzou", places: 150, status: "approved", date: "2025-05-11" }
+        ];
+        
+        let currentLang = 'fr';
+        let map;
+        
+        // Translations
+        const translations = {
+            fr: {
+                region_label: "Région Centre",
+                nav_dashboard: "Tableau de bord", nav_stats: "Statistiques", nav_map: "Carte", nav_wilayas: "Wilayas", nav_parkings: "Parkings",
+                header_title: "Région Centre - Tableau de bord",
+                stat_wilayas: "Wilayas", stat_parkings: "Parkings", stat_places: "Places", stat_revenue: "Revenus (M DA)",
+                chart_wilayas_title: "Top 5 Wilayas (nombre de parkings)", chart_status_title: "Répartition des parkings par statut",
+                map_title: "Carte des parkings - Région Centre", table_title: "Liste des wilayas de la région", export_btn: "Exporter",
+                table_wilaya: "Wilaya", table_code: "Code", table_parkings: "Parkings", table_places: "Places", table_occupation: "Taux occupation", table_revenue: "Revenus (M DA)", table_action: "Action",
+                recent_title: "Derniers parkings ajoutés", view_all: "Voir tout", recent_name: "Nom", recent_wilaya: "Wilaya", recent_places: "Places", recent_status: "Statut", recent_date: "Date",
+                footer_text: "© 2025 Parking Manager - Solution de gestion de parkings pour la région Centre", close_btn: "Fermer",
+                detail_parkings: "Parkings", detail_places: "Places", detail_revenue: "Revenus", detail_occupation: "Taux d'occupation", detail_approved: "Approuvés", detail_pending: "En attente"
+            },
+            ar: {
+                region_label: "المنطقة الوسطى",
+                nav_dashboard: "لوحة التحكم", nav_stats: "الإحصائيات", nav_map: "الخريطة", nav_wilayas: "الولايات", nav_parkings: "المواقف",
+                header_title: "المنطقة الوسطى - لوحة التحكم",
+                stat_wilayas: "ولاية", stat_parkings: "موقف", stat_places: "مكان", stat_revenue: "الإيرادات (مليون دج)",
+                chart_wilayas_title: "أفضل 5 ولايات (عدد المواقف)", chart_status_title: "توزيع المواقف حسب الحالة",
+                map_title: "خريطة المواقف - المنطقة الوسطى", table_title: "قائمة ولايات المنطقة", export_btn: "تصدير",
+                table_wilaya: "الولاية", table_code: "الرمز", table_parkings: "المواقف", table_places: "الأماكن", table_occupation: "نسبة الإشغال", table_revenue: "الإيرادات (م دج)", table_action: "إجراء",
+                recent_title: "آخر المواقف المضافة", view_all: "عرض الكل", recent_name: "الاسم", recent_wilaya: "الولاية", recent_places: "الأماكن", recent_status: "الحالة", recent_date: "التاريخ",
+                footer_text: "© 2025 مدير المواقف - حل إدارة مواقف السيارات للمنطقة الوسطى", close_btn: "إغلاق",
+                detail_parkings: "المواقف", detail_places: "الأماكن", detail_revenue: "الإيرادات", detail_occupation: "نسبة الإشغال", detail_approved: "موافق عليه", detail_pending: "قيد الانتظار"
+            },
+            en: {
+                region_label: "Centre Region",
+                nav_dashboard: "Dashboard", nav_stats: "Statistics", nav_map: "Map", nav_wilayas: "Provinces", nav_parkings: "Parkings",
+                header_title: "Centre Region - Dashboard",
+                stat_wilayas: "Provinces", stat_parkings: "Parkings", stat_places: "Spots", stat_revenue: "Revenue (M DA)",
+                chart_wilayas_title: "Top 5 Provinces (number of parkings)", chart_status_title: "Parking distribution by status",
+                map_title: "Parking Map - Centre Region", table_title: "List of provinces in the region", export_btn: "Export",
+                table_wilaya: "Province", table_code: "Code", table_parkings: "Parkings", table_places: "Spots", table_occupation: "Occupancy rate", table_revenue: "Revenue (M DA)", table_action: "Action",
+                recent_title: "Recently added parkings", view_all: "View all", recent_name: "Name", recent_wilaya: "Province", recent_places: "Spots", recent_status: "Status", recent_date: "Date",
+                footer_text: "© 2025 Parking Manager - Parking management solution for the Centre region", close_btn: "Close",
+                detail_parkings: "Parkings", detail_places: "Spots", detail_revenue: "Revenue", detail_occupation: "Occupancy rate", detail_approved: "Approved", detail_pending: "Pending"
+            }
+        };
+        
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            // تحديث اتجاه الصفحة للعربية
+            if (lang === 'ar') {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', 'ar');
+            document.body.style.fontFamily = "'Cairo', 'Tahoma', sans-serif";
+            // تحديث عرض الخريطة بعد تغيير الاتجاه
+            setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+            } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+            document.documentElement.setAttribute('lang', lang === 'fr' ? 'fr' : 'en');
+            document.body.style.fontFamily = "'Cairo', 'Segoe UI', sans-serif";
+            setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+            }
+
+            // تحديث النصوص
+            document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (t[key]) el.textContent = t[key];
+            });
+
+            // تحديث أزرار اللغة
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.lang === lang) btn.classList.add('active');
+            });
+
+            // تحديث الجداول والمحتوى
+            updateTableContent();
+            updateRecentParkings();
+            updateCharts();
+        }
+
+        function getWilayaName(w) { 
+            if (currentLang === 'ar') return w.name_ar;
+            if (currentLang === 'en') return w.name_en;
+            return w.name;
+        }
+        
+        function updateTableContent() {
+            const tbody = document.getElementById('wilayasTableBody');
+            tbody.innerHTML = '';
+            regionData.wilayas.forEach(w => {
+                const row = tbody.insertRow();
+                row.insertCell(0).innerHTML = `<strong>${getWilayaName(w)}</strong>`;
+                row.insertCell(1).innerHTML = w.code;
+                row.insertCell(2).innerHTML = w.parkings;
+                row.insertCell(3).innerHTML = w.places.toLocaleString();
+                row.insertCell(4).innerHTML = `<div class="progress-bar"><div class="progress-fill" style="width: ${w.occupation}%"></div>${w.occupation}%</div>`;
+                row.insertCell(5).innerHTML = `${w.revenue} DA`;
+                row.insertCell(6).innerHTML = `<button class="btn btn-outline btn-sm" onclick="showWilayaDetails(${w.id})">${translations[currentLang].table_action} →</button>`;
+            });
+        }
+        
+        function updateRecentParkings() {
+            const tbody = document.getElementById('recentParkingsBody');
+            tbody.innerHTML = '';
+            const t = translations[currentLang];
+            recentParkings.forEach(p => {
+                const row = tbody.insertRow();
+                row.insertCell(0).innerHTML = `<strong>${p.name}</strong>`;
+                row.insertCell(1).innerHTML = p.wilaya;
+                row.insertCell(2).innerHTML = p.places;
+                row.insertCell(3).innerHTML = `<span class="status ${p.status}">${p.status === 'approved' ? (currentLang === 'ar' ? 'موافق' : (currentLang === 'en' ? 'Approved' : 'Approuvé')) : (currentLang === 'ar' ? 'قيد الانتظار' : (currentLang === 'en' ? 'Pending' : 'En attente'))}</span>`;
+                row.insertCell(4).innerHTML = p.date;
+            });
+        }
+        
+        function updateStats() {
+            const totalWilayas = regionData.wilayas.length;
+            const totalParkings = regionData.wilayas.reduce((sum, w) => sum + w.parkings, 0);
+            const totalPlaces = regionData.wilayas.reduce((sum, w) => sum + w.places, 0);
+            const totalRevenue = regionData.wilayas.reduce((sum, w) => sum + w.revenue, 0);
+            document.getElementById('totalWilayas').innerText = totalWilayas;
+            document.getElementById('totalParkings').innerText = totalParkings;
+            document.getElementById('totalPlaces').innerText = totalPlaces.toLocaleString();
+            document.getElementById('totalRevenue').innerText = totalRevenue.toFixed(1);
+        }
+        
+        let wilayasChart, statusChart;
+        function updateCharts() {
+            const parkingsData = regionData.wilayas.map(w => w.parkings);
+            const placesData = regionData.wilayas.map(w => w.places);
+            const labels = regionData.wilayas.map(w => getWilayaName(w));
+            if (wilayasChart) wilayasChart.destroy();
+            wilayasChart = new Chart(document.getElementById('wilayasChart'), {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: translations[currentLang].stat_parkings, data: parkingsData, backgroundColor: '#FF9800', borderRadius: 8 }, { label: translations[currentLang].stat_places, data: placesData, backgroundColor: '#2196F3', borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top' } } }
+            });
+            if (statusChart) statusChart.destroy();
+            statusChart = new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: { labels: [translations[currentLang].detail_approved, translations[currentLang].detail_pending], datasets: [{ data: [142, 18], backgroundColor: ['#4CAF50', '#FF9800'] }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+        
+        function initMap() {
+            map = L.map('regionMap').setView([36.55, 3.2], 8);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+            regionData.wilayas.forEach(w => {
+                const marker = L.marker([w.lat, w.lng]).addTo(map);
+                marker.bindPopup(`<b>${getWilayaName(w)}</b><br>🅿️ ${w.parkings} parkings<br>🪑 ${w.places} places<br>💰 ${w.revenue}M DA`);
+            });
+        }
+        
+        function showRegionStats(type) {
+            const t = translations[currentLang];
+            const modal = document.getElementById('wilayaModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDetails = document.getElementById('modalDetails');
+            modalTitle.innerHTML = `<i class="fas fa-chart-line"></i> ${t.header_title}`;
+            if (type === 'wilayas') modalDetails.innerHTML = `<div class="detail-row"><strong>${t.stat_wilayas}:</strong> <span>6</span></div><div class="detail-row"><strong>Détail:</strong> Alger, Blida, Tipaza, Boumerdes, Tizi-Ouzou, Bouira</div>`;
+            else if (type === 'parkings') modalDetails.innerHTML = `<div class="detail-row"><strong>${t.stat_parkings}:</strong> <span>160</span></div><div class="detail-row"><strong>Par wilaya:</strong> Alger(45), Blida(28), Tizi-Ouzou(32), Boumerdes(22), Tipaza(18), Bouira(15)</div>`;
+            else if (type === 'places') modalDetails.innerHTML = `<div class="detail-row"><strong>${t.stat_places}:</strong> <span>17,530</span></div><div class="detail-row"><strong>Par wilaya:</strong> Alger(4,850), Tizi-Ouzou(3,560), Blida(3,100), Boumerdes(2,420), Tipaza(1,950), Bouira(1,650)</div>`;
+            else modalDetails.innerHTML = `<div class="detail-row"><strong>${t.stat_revenue}:</strong> <span>127.4M DA</span></div><div class="detail-row"><strong>Par wilaya:</strong> Alger(42.5M), Tizi-Ouzou(24.7M), Blida(21.8M), Boumerdes(15.9M), Tipaza(12.7M), Bouira(9.8M)</div>`;
+            modal.style.display = 'flex';
+        }
+        
+        function showWilayaDetails(id) {
+            const w = regionData.wilayas.find(w => w.id === id);
+            const t = translations[currentLang];
+            const modal = document.getElementById('wilayaModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDetails = document.getElementById('modalDetails');
+            modalTitle.innerHTML = `<i class="fas fa-city"></i> ${getWilayaName(w)}`;
+            modalDetails.innerHTML = `<div class="detail-row"><strong>${t.detail_parkings}:</strong> ${w.parkings}</div><div class="detail-row"><strong>${t.detail_places}:</strong> ${w.places}</div><div class="detail-row"><strong>${t.detail_revenue}:</strong> ${w.revenue} DA</div><div class="detail-row"><strong>${t.detail_occupation}:</strong> ${w.occupation}%</div><div class="detail-row"><strong>${t.detail_approved}:</strong> ${w.approved}</div><div class="detail-row"><strong>${t.detail_pending}:</strong> ${w.pending}</div>`;
+            modal.style.display = 'flex';
+        }
+        
+        function closeModal() { document.getElementById('wilayaModal').style.display = 'none'; }
+        function exportData() { alert('Exportation des données... (Format CSV/Excel serait disponible)'); }
+        
+        document.getElementById('currentDate').innerHTML = new Date().toLocaleDateString('fr-FR');
+        document.querySelectorAll('.lang-btn').forEach(btn => { btn.addEventListener('click', () => changeLanguage(btn.dataset.lang)); });
+        window.onclick = (e) => { if (e.target === document.getElementById('wilayaModal')) closeModal(); };
+        
+        updateStats();
+        updateTableContent();
+        updateRecentParkings();
+        initMap();
+        updateCharts();
+        changeLanguage('fr');
+    </script>
+</body>
+</html>
